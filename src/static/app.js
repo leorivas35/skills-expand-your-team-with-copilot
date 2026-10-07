@@ -521,6 +521,9 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
+    const shareUrl = window.location.href.split("#")[0];
+    const shareText = `Check out ${name} at our school: ${details.description}`;
+
     activityCard.innerHTML = `
       ${tagHtml}
       <h4>${name}</h4>
@@ -554,6 +557,13 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("")}
         </ul>
       </div>
+      <div class="share-buttons">
+        <span class="share-label">Share:</span>
+        <a class="share-button" target="_blank" rel="noopener noreferrer" title="Share on Facebook" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}">Facebook</a>
+        <a class="share-button" target="_blank" rel="noopener noreferrer" title="Share on X" href="https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}">X</a>
+        <a class="share-button" title="Share by email" href="mailto:?subject=${encodeURIComponent(name)}&body=${encodeURIComponent(shareText + " " + shareUrl)}">Email</a>
+        <button type="button" class="share-button copy-link-button" title="Copy link">Copy link</button>
+      </div>
       <div class="activity-card-actions">
         ${
           currentUser
@@ -572,6 +582,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       </div>
     `;
+
+    const copyButton = activityCard.querySelector(".copy-link-button");
+    copyButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        copyButton.textContent = "Copied!";
+      } catch (e) {
+        copyButton.textContent = "Copy failed";
+      }
+      setTimeout(() => (copyButton.textContent = "Copy link"), 2000);
+    });
 
     // Add click handlers for delete buttons
     const deleteButtons = activityCard.querySelectorAll(".delete-participant");
